@@ -124,11 +124,8 @@ fn upload (data: Data) -> Custom<Json<CustomResponse>> {
     )
 }
 
-mod module;
-
 fn main() {
-    // rocket::ignite()
-    //     .mount("/", routes![home, create, find, update, delete, upload])
-    //     .launch();
-    module::file::modules::connection(12);
+    rocket::ignite()
+        .mount("/", routes![home, create, find, update, delete, upload])
+        .launch();
 }
