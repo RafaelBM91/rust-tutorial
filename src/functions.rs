@@ -2,24 +2,22 @@ use dotenv::dotenv;
 use std::env;
 use std::vec::Vec;
 
-use diesel::prelude::*;
 use diesel::pg::PgConnection;
+use diesel::prelude::*;
 
 use rocket_contrib::json::Json;
 
-use super::model::{ Post, CreatePost, NewPost };
+use super::model::{CreatePost, NewPost, Post};
 
-fn connection_db () -> PgConnection {
+fn connection_db() -> PgConnection {
     dotenv().ok();
 
-    let database_url = env::var("DATABASE_URL")
-        .expect("DATABASE_URL must be set");
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    PgConnection::establish( &database_url )
-        .expect(&format!("Error connecting to {}", database_url))
+    PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
 }
 
-pub fn create_post (_create_post: &Json<CreatePost>) -> Post {
+pub fn create_post(_create_post: &Json<CreatePost>) -> Post {
     use super::schema::posts;
 
     let new_post = NewPost {
@@ -29,34 +27,35 @@ pub fn create_post (_create_post: &Json<CreatePost>) -> Post {
 
     diesel::insert_into(posts::table)
         .values(&new_post)
-        .get_result( &connection_db() )
+        .get_result(&connection_db())
         .expect("Error saving new post")
 }
 
-pub fn find_post () -> Vec<Post> {
+pub fn find_post() -> Vec<Post> {
     use super::schema::posts::dsl::posts;
     use super::schema::posts::dsl::published;
 
-    posts.filter(published.eq(false))
+    posts
+        .filter(published.eq(false))
         .limit(5)
-        .load::<Post>( &connection_db() )
+        .load::<Post>(&connection_db())
         .expect("Error loading posts")
 }
 
-pub fn update_post (id: i32) -> Post {
+pub fn update_post(id: i32) -> Post {
     use super::schema::posts::dsl::posts;
     use super::schema::posts::dsl::published;
 
     diesel::update(posts.find(id))
         .set(published.eq(true))
-        .get_result::<Post>( &connection_db() )
-        .expect( &format!("Unable to find post {}", id) )
+        .get_result::<Post>(&connection_db())
+        .expect(&format!("Unable to find post {}", id))
 }
 
-pub fn delete_post (id: i32) -> usize {
+pub fn delete_post(id: i32) -> usize {
     use super::schema::posts::dsl::posts;
 
     diesel::delete(posts.find(id))
-        .execute( &connection_db() )
+        .execute(&connection_db())
         .expect("Error deleting")
 }

@@ -1,0 +1,68 @@
+
+    let _headers = read.headers().unwrap();
+    if _headers != &csv::StringRecord::from(vec!["title","body","line"]) {
+        return Custom (
+            Status::BadRequest,
+            Json(CustomResponse {
+                message: "[Error] in headers".to_string()
+            })
+        )
+    }
+
+    for x in &vec {
+        println!("{}", x);
+    }
+
+    let uk = read_csv(read);
+
+
+
+    match read_csv(read) {
+        Ok(inserted) => rows = inserted,
+        Err(error)   => {
+            println!("{:?}", error.source().unwrap() );
+            println!("{:?}", error.downcast_ref::<csv::Error>().unwrap().source().unwrap() );
+            println!("{:?}", error.downcast_ref::<csv::Error>().unwrap().kind() );
+            println!("{:?}", error.source().unwrap().to_string() );
+            println!("{:?}", error.to_string() );
+            let v = error.downcast_ref::<csv::Error>().unwrap().kind();
+            match v {
+                csv::ErrorKind::Deserialize { pos: position, err: _err } => {
+                    println!("{:?}", position.as_ref().unwrap() );
+                    println!("{:?}", _err.field() );
+                    println!("{:?}", _err.field().is_some() );
+                }
+                _ => ()
+            }
+        }
+    }
+
+
+
+    use std::any::type_name;
+
+fn type_of<T>(_: T) -> &'static str {
+    type_name::<T>()
+}
+
+fn parse_error_load (value: Result<Vec<CreatePost>, Box<dyn Error>>) -> (Vec<CreatePost>, Option<ErrorLoadDetail>) {
+    let mut rows: Vec<CreatePost> = Vec::new();
+    let mut error_response: Option<ErrorLoadDetail> = None;
+    match value {
+        Ok(inserted) => rows = inserted,
+        Err(error)   => {
+            let v = error.downcast_ref::<csv::Error>().unwrap().kind();
+            match v {
+                csv::ErrorKind::Deserialize { pos: _pos, err: _err } => {
+                    let position = _pos.as_ref().unwrap();
+                    let line    = if _err.field().is_some() { position.line() } else { 0 };
+                    let cell    = if _err.field().is_some() { _err.field().unwrap() + 1 } else { 0 };
+                    let message = _err.kind().to_string();
+                    error_response = Some(ErrorLoadDetail { line, cell, message });
+                }
+                _ => ()
+            }
+        }
+    };
+    (rows, error_response)
+}
