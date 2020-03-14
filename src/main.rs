@@ -14,6 +14,7 @@ extern crate uuid;
 use uuid::Uuid;
 
 use rocket_contrib::json::Json;
+use rocket_contrib::serve::StaticFiles;
 
 use rocket::http::Status;
 use rocket::response::status::Custom;
@@ -28,11 +29,6 @@ mod schema;
 
 mod functions;
 use functions::{create_post, delete_post, find_post, update_post};
-
-#[get("/")]
-fn home() -> &'static str {
-    "Hello, world!"
-}
 
 #[post("/create", format = "application/json", data = "<_create_post>")]
 fn create(_create_post: Json<CreatePost>) -> Json<Post> {
@@ -137,6 +133,7 @@ fn upload(data: Data) -> Custom<Json<CustomResponse>> {
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes![home, create, find, update, delete, upload])
+        .mount("/", StaticFiles::from("view"))
+        .mount("/api", routes![create, find, update, delete, upload])
         .launch();
 }

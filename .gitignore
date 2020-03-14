@@ -1,6 +1,7 @@
 /target
 /.cargo
 /postgres
+.env
 
 #Added by cargo
 #
