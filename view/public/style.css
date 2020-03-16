@@ -1,6 +1,16 @@
-body {
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+
+.content-title {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
 }

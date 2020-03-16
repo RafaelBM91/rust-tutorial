@@ -9,7 +9,9 @@ use rocket_contrib::json::Json;
 
 use super::model::{CreatePost, NewPost, Post};
 
-fn connection_db() -> PgConnection {
+use super::schema::posts;
+
+pub fn connection_db() -> PgConnection {
     dotenv().ok();
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
@@ -18,8 +20,6 @@ fn connection_db() -> PgConnection {
 }
 
 pub fn create_post(_create_post: &Json<CreatePost>) -> Post {
-    use super::schema::posts;
-
     let new_post = NewPost {
         title: &_create_post.title,
         body: &_create_post.body,

@@ -11,8 +11,6 @@ extern crate csv;
 extern crate dotenv;
 extern crate uuid;
 
-use uuid::Uuid;
-
 use rocket_contrib::json::Json;
 use rocket_contrib::serve::StaticFiles;
 
@@ -29,6 +27,10 @@ mod schema;
 
 mod functions;
 use functions::{create_post, delete_post, find_post, update_post};
+
+// --------------------------------------------------------------------------------------- //
+
+use uuid::Uuid;
 
 #[post("/create", format = "application/json", data = "<_create_post>")]
 fn create(_create_post: Json<CreatePost>) -> Json<Post> {
@@ -131,9 +133,43 @@ fn upload(data: Data) -> Custom<Json<CustomResponse>> {
     )
 }
 
+// --------------------------------------------------------------------------------------- //
+
+mod connection;
+mod contact;
+use contact::app::application::application::{
+    fn_create_contact,
+    fn_upload_contact
+};
+use crate::contact::models::{
+    create::mods_contact::{
+        CreateContactRequest,
+        Contact
+    },
+    upload::mods_upload::{
+        CustomResponse as CustomResponseX
+    }
+};
+
+#[post("/create", format = "application/json", data = "<data>")]
+pub fn create_contact (data: Json<CreateContactRequest>) -> Json<Contact> {
+    Json(fn_create_contact(data.into_inner()))
+}
+
+#[post("/upload", format = "application/octet-stream", data = "<data>")]
+fn upload_contact(data: Data) -> Custom<Json<CustomResponseX>> {
+    Custom(
+        Status::Accepted,
+        Json(fn_upload_contact(data))
+    )
+}
+
+// --------------------------------------------------------------------------------------- //
+
 fn main() {
     rocket::ignite()
         .mount("/", StaticFiles::from("view"))
         .mount("/api", routes![create, find, update, delete, upload])
+        .mount("/contact", routes![create_contact,upload_contact])
         .launch();
 }

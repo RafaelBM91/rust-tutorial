@@ -37,28 +37,19 @@ postgre:
 	docker run \
 	-d \
 	--rm \
-	--name="postgre-rust" \
+	--name=${POSTGRES_NAME} \
 	-e POSTGRES_USER=${POSTGRES_USER} \
 	-e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
 	-e POSTGRES_DB=${POSTGRES_DB} \
 	-v ${PWD}/postgres:/var/lib/postgresql/data \
+	-v ${PWD}/src/migration:/var/migration \
 	-p ${POSTGRES_PORT}:5432 \
 	--expose=5432 \
 	postgres:latest
 
-# migrate:
-# 	docker run \
-# 	--rm \
-# 	-e USER=${USER} \
-# 	-e DATABASE_URL=${DATABASE_URL} \
-# 	-v "${PWD}":${APP_PATH_INTERNAL} \
-# 	rust-crud:latest \
-# 	diesel migration redo
-
-# shell:
-# 	docker run \
-# 	-it \
-# 	--rm \
-# 	-e USER=${USER} \
-# 	-v "${PWD}":${APP_PATH_INTERNAL} \
-# 	rust-crud:latest bash 
+migrate:
+	docker exec \
+		${POSTGRES_NAME} \
+		psql -f \
+			${MIGRATION_FILE_CREATE} \
+			postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB} 

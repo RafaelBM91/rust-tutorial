@@ -4,10 +4,64 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="public/style.css">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.jqueryui.min.css">
         <link rel="shortcut icon" href="public/favicon.ico" type="image/x-icon">
         <title>Rust Power 2020</title>
     </head>
     <body>
-        <h1>Welcome to Rust Power 2020</h1>
+        <div class="content">
+            <div class="content-title">
+                <h1>Welcome to Rust Power 2020</h1>
+            </div>
+            <table id="data" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Body</th>
+                        <th>Published</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </body>
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.jqueryui.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $.ajax({
+                'type': 'POST',
+                'url': '/api/find',
+                'contentType': 'application/json',
+                'data': '{}',
+                'dataType': 'json',
+                'success': function (data) {
+                    
+                    for (i=0; i<data.length; i++) {
+                        $('#data tbody').append('\
+                        <tr>\
+                            <td>'+ data[i].id +'</td>\
+                            <td>'+ data[i].title +'</td>\
+                            <td>'+ data[i].body +'</td>\
+                            <td>'+ data[i].published +'</td>\
+                        </tr>\
+                        ');
+                    }
+                    
+                    $('#data').DataTable();
+                }
+            });
+        });
+    </script>
+
 </html>
