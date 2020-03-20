@@ -2,7 +2,10 @@ pub mod mods_template {
     // --------------- //
     use bson::oid::ObjectId;
     use crate::template::data::model::dt_template::DTemplate;
-    use crate::helpers::utils::parse_datetime::date_time::date_time_from_string;
+    use crate::helpers::utils::{
+        parse_datetime::date_time::date_time_from_string,
+        parse_vector::vector::vector_from_string,
+    };
     // --------------- //
 
     #[allow(non_snake_case)]
@@ -71,11 +74,11 @@ pub mod mods_template {
                 picture_url           : self.Picture_URL,
                 facebook_url          : self.Facebook_URL,
                 instagram_url         : self.Instagram_URL,
-                interests             : self.Interests,
+                interests             : vector_from_string(self.Interests),
                 sex                   : self.Sex,
                 nse                   : self.NSE,
                 birthday              : date_time_from_string(self.Birthday),
-                media_consumption     : self.Media_Consumption,
+                media_consumption     : vector_from_string(self.Media_Consumption),
                 company_linkedin_url  : self.Company_LinkedIn_URL,
                 company_name          : self.Company_Name,
                 potential_size        : self.Potential_Size,
