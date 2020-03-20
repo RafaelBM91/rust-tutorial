@@ -6,6 +6,7 @@ extern crate rocket_contrib;
 #[macro_use]
 extern crate serde_derive;
 extern crate mongodb;
+#[macro_use]
 extern crate bson;
 extern crate csv;
 extern crate dotenv;

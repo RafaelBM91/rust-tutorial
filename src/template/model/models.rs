@@ -1,56 +1,56 @@
 pub mod mods_template {
     // --------------- //
-    use crate::helpers::models::csv::csv::mods_csv::ErrorLoadDetail;
-    use crate::template::data::model::dt_template::DTemplate;
     use bson::oid::ObjectId;
+    use crate::template::data::model::dt_template::DTemplate;
+    use crate::helpers::utils::parse_datetime::date_time::date_time_from_string;
     // --------------- //
 
     #[allow(non_snake_case)]
     #[derive(Debug, Deserialize, Serialize)]
     pub struct Template {
-        pub Funnel_Status: String,
-        pub DecisionMaker: String,
-        pub LastName: String,
-        pub Company_Area: String,
-        pub Company_Position: String,
-        pub Personal_Mail: String,
-        pub Personal_CompanyMail: String,
-        pub CellPhone_Whatsapp: String,
-        pub Skype_User: String,
-        pub HangOut_User: String,
-        pub Linkedin_URL: String,
-        pub Picture_URL: String,
-        pub Facebook_URL: String,
-        pub Instagram_URL: String,
-        pub Interests: String,
-        pub Sex: String,
-        pub NSE: String,
-        pub Birthday: String,
-        pub Media_Consumption: String,
-        pub Company_LinkedIn_URL: String,
-        pub Company_Name: String,
-        pub Potential_Size: String,
-        pub Company_Sector: String,
-        pub Company_Products: String,
-        pub Web_URL: String,
-        pub Company_Phone: String,
-        pub Sucursal_Location: String,
-        pub City: String,
-        pub State: String,
-        pub Country: String,
-        pub NextPurchase_Date: String,
-        pub Satisfaction_DM: String,
-        pub Operator_MailID: String,
-        pub Countable_Number: String,
-        pub DM_Countable: String,
+        pub Funnel_Status         : String,
+        pub DecisionMaker         : String,
+        pub LastName              : String,
+        pub Company_Area          : String,
+        pub Company_Position      : String,
+        pub Personal_Mail         : String,
+        pub Personal_CompanyMail  : String,
+        pub CellPhone_Whatsapp    : String,
+        pub Skype_User            : String,
+        pub HangOut_User          : String,
+        pub Linkedin_URL          : String,
+        pub Picture_URL           : String,
+        pub Facebook_URL          : String,
+        pub Instagram_URL         : String,
+        pub Interests             : String,
+        pub Sex                   : String,
+        pub NSE                   : String,
+        pub Birthday              : String,
+        pub Media_Consumption     : String,
+        pub Company_LinkedIn_URL  : String,
+        pub Company_Name          : String,
+        pub Potential_Size        : String,
+        pub Company_Sector        : String,
+        pub Company_Products      : String,
+        pub Web_URL               : String,
+        pub Company_Phone         : String,
+        pub Sucursal_Location     : String,
+        pub City                  : String,
+        pub State                 : String,
+        pub Country               : String,
+        pub NextPurchase_Date     : String,
+        pub Satisfaction_DM       : String,
+        pub Operator_MailID       : String,
+        pub Countable_Number      : String,
+        pub DM_Countable          : String,
         pub Personal_CountableMail: String,
-        pub CellPhone_Countable: String,
-        pub Payment_Date: String,
-        pub Frecuency: String,
-        pub Payment_Method: String,
-        pub Payment_Ammount: String,
-        pub Status_Countable: String,
-        pub Payment_Description: String,
+        pub CellPhone_Countable   : String,
+        pub Payment_Date          : String,
+        pub Frecuency             : String,
+        pub Payment_Method        : String,
+        pub Payment_Ammount       : f32,
+        pub Status_Countable      : String,
+        pub Payment_Description   : String,
     }
 
     impl Template {
@@ -74,7 +74,7 @@ pub mod mods_template {
                 interests             : self.Interests,
                 sex                   : self.Sex,
                 nse                   : self.NSE,
-                birthday              : self.Birthday,
+                birthday              : date_time_from_string(self.Birthday),
                 media_consumption     : self.Media_Consumption,
                 company_linkedin_url  : self.Company_LinkedIn_URL,
                 company_name          : self.Company_Name,
@@ -94,7 +94,7 @@ pub mod mods_template {
                 dm_countable          : self.DM_Countable,
                 personal_countablemail: self.Personal_CountableMail,
                 cellphone_countable   : self.CellPhone_Countable,
-                payment_date          : self.Payment_Date,
+                payment_date          : date_time_from_string(self.Payment_Date),
                 frecuency             : self.Frecuency,
                 payment_method        : self.Payment_Method,
                 payment_ammount       : self.Payment_Ammount,
@@ -102,12 +102,5 @@ pub mod mods_template {
                 payment_description   : self.Payment_Description,
             }
         }
-    }
-
-    #[derive(Serialize)]
-    pub struct CustomResponse {
-        pub message : String,
-        pub inserted: u64,
-        pub fail    : Vec<Option<ErrorLoadDetail>>,
     }
 }
