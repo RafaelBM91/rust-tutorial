@@ -47,6 +47,18 @@ postgre:
 	--expose=5432 \
 	postgres:latest
 
+mongo:
+	docker run \
+	-d \
+	--rm \
+	--name=${MONGO_NAME} \
+	-e MONGO_INITDB_ROOT_USERNAME=${MONGO_USER} \
+	-e MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASS} \
+	-v ${PWD}/mongo:/data/db \
+	-p ${MONGO_PORT}:27017 \
+	--expose=5432 \
+	mongo:latest
+
 migrate:
 	docker exec \
 		${POSTGRES_NAME} \

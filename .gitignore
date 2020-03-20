@@ -1,6 +1,7 @@
 /target
 /.cargo
 /postgres
+/mongo
 .env
 
 #Added by cargo
