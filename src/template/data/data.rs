@@ -1,29 +1,33 @@
 pub mod data_template_fn {
     // --------------- //
+    use mongodb::{
+        Collection,
+        options::FindOptions,
+    };
     use crate::template::model::models::mods_template::Template;
     use crate::template::data::model::dt_template::DTemplate;
-    use mongodb::Collection;
-    use bson::Bson::Document;
-    use mongodb::options::FindOptions;
+    use crate::template::data::model::dt_template::FindTemplateParams;
+    use crate::helpers::utils::parse_ordered::ordered::struct_to_ordered;
     // --------------- //
 
     pub fn create (template: Template, collection: &Collection) -> DTemplate {
         let data_template = template.parse();
-        let serialized_template   = bson::to_bson(&data_template.clone()).unwrap();
-        if let Document(document) = serialized_template {
-            collection.insert_one(document, None).unwrap();
-        } else {
-            println!("Error converting the BSON object into a MongoDB document");
+        let document = struct_to_ordered(data_template.clone());
+        match collection.insert_one(document, None) {
+            Ok(_)  => (),
+            Err(_) => println!("[error Insert to Doc]")
         }
         data_template
     }
 
-    pub fn find (collection: &Collection) -> Vec<DTemplate> {
-        let mut rows: Vec<DTemplate> = Vec::new();
-        let options = FindOptions::builder()
-            .limit(1)
+    pub fn find (params: FindTemplateParams, collection: &Collection) -> Vec<DTemplate> {
+        let mut rows  : Vec<DTemplate> = Vec::new();
+        let options                    = FindOptions::builder()
+            .limit(params._limit)
+            .sort(params._sort.clone().apply_sort())
             .build();
-        let cursor = collection.find(doc! {}, options).unwrap();
+        let filters = params._filters.apply_filters();
+        let cursor = collection.find(filters, options).unwrap();
         for result in cursor {
             if let Ok(item) = result {
                 let row: DTemplate = bson::from_bson(

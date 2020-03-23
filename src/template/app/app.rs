@@ -7,6 +7,7 @@ pub mod fn_app_template {
     use crate::template::model::models::mods_template::Template;
     use crate::template::data::model::dt_template::DTemplate;
     use crate::template::data::data::data_template_fn;
+    use crate::template::data::model::dt_template::FindTemplateParams;
     use crate::helpers::read::csv::read_csv::fn_read_csv;
     use crate::helpers::models::csv::csv::mods_csv::ErrorLoadDetail;
     // --------------- //
@@ -28,8 +29,8 @@ pub mod fn_app_template {
         (inserted, response.1)
     }
 
-    pub fn find (collection: &Collection) -> Vec<DTemplate> {
-        data_template_fn::find(collection)
+    pub fn find (params: FindTemplateParams, collection: &Collection) -> Vec<DTemplate> {
+        data_template_fn::find(params, collection)
     }
 
 }

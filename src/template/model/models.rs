@@ -83,7 +83,7 @@ pub mod mods_template {
                 company_name          : self.Company_Name,
                 potential_size        : self.Potential_Size,
                 company_sector        : self.Company_Sector,
-                company_products      : self.Company_Products,
+                company_products      : vector_from_string(self.Company_Products),
                 web_url               : self.Web_URL,
                 company_phone         : self.Company_Phone,
                 sucursal_location     : self.Sucursal_Location,

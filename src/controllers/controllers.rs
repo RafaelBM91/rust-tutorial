@@ -16,9 +16,10 @@ pub mod controller {
     use crate::database::connection::get_connection::connect;
     use crate::helpers::models::csv::csv::mods_csv::CustomResponse;
     use crate::template::data::model::dt_template::DTemplate;
+    use crate::template::data::model::dt_template::FindTemplateParams;
     // --------------- //
 
-    #[post("/upload", format = "application/octet-stream", data = "<data>")]
+    #[post("/upload", format="application/octet-stream", data="<data>")]
     fn upload (data: Data, state: State<Collection>) -> Custom<Json<CustomResponse>> {
         let response = fn_app_template::upload(data, state.inner());
         Custom(
@@ -31,9 +32,9 @@ pub mod controller {
         )
     }
 
-    #[post("/find", format = "application/json")]
-    fn find (state: State<Collection>) -> Json<Vec<DTemplate>> {
-        Json(fn_app_template::find(state.inner()))
+    #[post("/find", format="application/json", data="<params>")]
+    fn find (params: Json<FindTemplateParams>, state: State<Collection>) -> Json<Vec<DTemplate>> {
+        Json(fn_app_template::find(params.into_inner(), state.inner()))
     }
 
     pub fn engine () {
