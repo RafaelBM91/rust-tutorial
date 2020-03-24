@@ -5,7 +5,6 @@ pub mod controller {
         State,
         Data,
         response::status::Custom,
-        fairing::AdHoc,
     };
     use rocket_contrib::{
         serve::StaticFiles,
@@ -17,7 +16,6 @@ pub mod controller {
     use crate::helpers::models::csv::csv::mods_csv::CustomResponse;
     use crate::template::data::model::dt_template::DTemplate;
     use crate::template::data::model::dt_template::FindTemplateParams;
-    use crate::middleware::caught_req::caught::caught_authorization;
     use crate::middleware::intercept::interceptor::AuthCaught;
     // --------------- //
 
@@ -65,7 +63,6 @@ pub mod controller {
             .manage(collection)
             .mount("/", StaticFiles::from("view"))
             .mount("/api", routes![upload,find,intercept])
-            .attach(AdHoc::on_request("Authorization", caught_authorization))
             .launch();
     }
 }
