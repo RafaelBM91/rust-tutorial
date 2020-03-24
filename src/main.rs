@@ -11,6 +11,7 @@ extern crate bson;
 extern crate csv;
 extern crate dotenv;
 extern crate uuid;
+extern crate crypto;
 
 mod helpers;
 mod controllers;
@@ -18,6 +19,7 @@ mod template;
 mod database;
 mod authorization;
 mod middleware;
+mod users;
 
 use controllers::controllers::controller::engine;
 

@@ -3,14 +3,14 @@ pub mod interceptor {
     use rocket::Outcome;
     use rocket::http::Status;
     use rocket::request::{self, Request, FromRequest};
-    use crate::authorization::auth::authorization::Claims;
+    use crate::authorization::auth::authorization::Lock;
     // --------------- //
 
     #[derive(Debug)]
     pub struct AuthCaught(String);
 
     fn is_valid(key: &str) -> bool {
-        match Claims::authorize_session(key.to_string()) {
+        match Lock::authorize_session(key.to_string()) {
             Some(_) => true,
             None    => false,
         }
@@ -30,7 +30,7 @@ pub mod interceptor {
             match keys.len() {
                 0 => Outcome::Failure((Status::BadRequest, AuthCaughtError::Missing)),
                 1 if is_valid(keys[0]) => {
-                    let id = Claims::authorize_session(keys[0].to_string()).unwrap();
+                    let id = Lock::authorize_session(keys[0].to_string()).unwrap();
                     return Outcome::Success(AuthCaught(id));
                 },
                 1 => Outcome::Failure((Status::BadRequest, AuthCaughtError::Invalid)),

@@ -15,11 +15,11 @@ pub mod authorization {
     // --------------- //
 
     #[derive(Debug, Serialize, Deserialize)]
-    pub struct Claims {
+    pub struct Lock {
         pub id : String,
         pub exp: i64,
     }
-    impl Claims {
+    impl Lock {
         pub fn create_session (id: String) -> Option<String> {
             let at_moment = offset::Utc::now();
             let dtu       = at_moment
@@ -27,14 +27,14 @@ pub mod authorization {
                     Duration::seconds(5)
                 ).unwrap();
     
-            let my_claims = Claims {
+            let my_lock = Lock {
                 id : id,
                 exp: dtu.timestamp(),
             };
     
             match encode(
                 &Header::default(),
-                &my_claims,
+                &my_lock,
                 &EncodingKey::from_secret("secret".as_ref())
             ) {
                 Ok(token) => Some(token),
@@ -42,7 +42,7 @@ pub mod authorization {
             }
         }
         pub fn authorize_session (token: String) -> Option<String> {
-            match decode::<Claims>(
+            match decode::<Lock>(
                 &token,
                 &DecodingKey::from_secret(
                     "secret".as_ref()
