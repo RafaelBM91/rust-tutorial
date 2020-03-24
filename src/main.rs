@@ -16,6 +16,8 @@ mod helpers;
 mod controllers;
 mod template;
 mod database;
+mod authorization;
+mod middleware;
 
 use controllers::controllers::controller::engine;
 

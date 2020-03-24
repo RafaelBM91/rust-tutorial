@@ -1,11 +1,11 @@
 pub mod controller {
-    
     // --------------- //
     use rocket::{
         http::Status,
         State,
         Data,
-        response::status::Custom
+        response::status::Custom,
+        fairing::AdHoc,
     };
     use rocket_contrib::{
         serve::StaticFiles,
@@ -17,6 +17,8 @@ pub mod controller {
     use crate::helpers::models::csv::csv::mods_csv::CustomResponse;
     use crate::template::data::model::dt_template::DTemplate;
     use crate::template::data::model::dt_template::FindTemplateParams;
+    use crate::middleware::caught_req::caught::caught_authorization;
+    use crate::middleware::intercept::interceptor::AuthCaught;
     // --------------- //
 
     #[post("/upload", format="application/octet-stream", data="<data>")]
@@ -33,8 +35,25 @@ pub mod controller {
     }
 
     #[post("/find", format="application/json", data="<params>")]
-    fn find (params: Json<FindTemplateParams>, state: State<Collection>) -> Json<Vec<DTemplate>> {
+    fn find (
+        params: Json<FindTemplateParams>,
+        state : State<Collection>
+    ) -> Json<Vec<DTemplate>> {
         Json(fn_app_template::find(params.into_inner(), state.inner()))
+    }
+
+    #[derive(Debug, Deserialize, Serialize)]
+    struct Intercept {
+        another: String
+    }
+
+    #[post("/intercept", format="application/json", data="<params>")]
+    fn intercept (
+        params: Json<Intercept>,
+        id: AuthCaught,
+    ) -> &'static str {
+        println!("Result: {:?}", id);
+        "Sensitive data."
     }
 
     pub fn engine () {
@@ -45,8 +64,8 @@ pub mod controller {
         rocket::ignite()
             .manage(collection)
             .mount("/", StaticFiles::from("view"))
-            .mount("/api", routes![upload,find])
+            .mount("/api", routes![upload,find,intercept])
+            .attach(AdHoc::on_request("Authorization", caught_authorization))
             .launch();
     }
-
 }
