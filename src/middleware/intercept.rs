@@ -7,7 +7,7 @@ pub mod interceptor {
     // --------------- //
 
     #[derive(Debug)]
-    pub struct AuthCaught(String);
+    pub struct AuthCaught(pub String);
 
     fn is_valid(key: &str) -> bool {
         match Lock::authorize_session(key.to_string()) {

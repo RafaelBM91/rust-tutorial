@@ -24,7 +24,8 @@ pub mod authorization {
             let at_moment = offset::Utc::now();
             let dtu       = at_moment
                 .checked_add_signed(
-                    Duration::seconds(5)
+                    // Duration::seconds(60)
+                    Duration::days(30)
                 ).unwrap();
     
             let my_lock = Lock {
